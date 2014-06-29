@@ -7,8 +7,14 @@
 <script>
 $(document).ready(function(){
     $.getJSON("http://netgear.rohidekar.com:4453/dups/all?locations=" + encodeURIComponent(document.getElementById("locations").innerHTML),function(result){
-    	$.each(result, function(i, field){
-        $("#items").append(i + " " + field + " ");
+    	$.each(result, function(location, filesAtLocationArray){
+    		//$("#items").append(filesAtLocationArray + "<br>");
+    		$.each(filesAtLocationArray, function(cluster, fileDescriptors){
+				$("#items").append( "<br><hr>");
+				$.each(fileDescriptors, function(i, fileDescriptor){
+					$("#items").append(JSON.stringify(fileDescriptor.filesystem) + "<br>");
+				});
+			});
       });
     });
 });
