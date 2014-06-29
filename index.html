@@ -7,11 +7,9 @@
 <script>
 $(document).ready(function(){
     $.getJSON("http://netgear.rohidekar.com:4453/dups/all?locations=" + encodeURIComponent(document.getElementById("locations").innerHTML),function(result){
-    	console.log(result);
-	   $("items").append(result);
-      //$.each(result, function(i, field){
-        //$("#items").append(i + " " + field + " ");
-      //});
+    	$.each(result, function(i, field){
+        $("#items").append(i + " " + field + " ");
+      });
     });
 });
 </script>
