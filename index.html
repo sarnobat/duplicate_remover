@@ -7,17 +7,36 @@
 <script>
 $(document).ready(function(){
     $.getJSON("http://netgear.rohidekar.com:4453/dups/all?locations=" + encodeURIComponent(document.getElementById("locations").innerHTML),function(result){
-    	$.each(result, function(location, filesAtLocationArray){
-    		//$("#items").append(filesAtLocationArray + "<br>");
-    		$.each(filesAtLocationArray, function(cluster, fileDescriptors){
-				$("#items").append( "<br><hr>");
+    	var j = 0;
+		var table = "<table>";
+    	$.each(result, function(location, clusters){
+    		//$("#items").append(clusters + "<br>");
+    		$.each(clusters, function(cluster, fileDescriptors){
+				table += "<tr><td><table id=row-"+j+">";
 				$.each(fileDescriptors, function(i, fileDescriptor){
-					$("#items").append(JSON.stringify(fileDescriptor.filesystem) + "<br>");
+					table += "<tr>";
+					table +="<td>" +fileDescriptor.filesystem + "</td>";
+					table +="<td><button type=button onclick='deleteFile(" +JSON.stringify(fileDescriptor.filesystem) + ", \"row-"+j+"\")'>Delete</input></td>";
+					table += "</tr>";
+
 				});
+				j++;
+				table += "</table>";
+				table += "</td></tr>";
+				table +="<tr><td><br></td><td></td></tr>";
 			});
       });
+	  $("#items").append( table);
     });
 });
+
+function deleteFile(fileSystemPath, id) {
+		console.log(fileSystemPath);
+	    $.getJSON("http://netgear.rohidekar.com:4453/dups/deleteFile?fileSystemPath=" + encodeURIComponent(fileSystemPath),function(result, element){
+	    	console.log('Deleted. ' + id);
+	    	$("#"+id).remove();
+	    });
+}
 </script>
 </head>
 <body>

@@ -9,7 +9,8 @@ var app = express();
 
 app.get('/dups/all', function(req, res) {
 	
-	var location = "/media/sarnobat/e/Sridhar/Photos/camera phone photos/iPhone/";
+	//var location = "/Large/";
+	var location = "/media/sarnobat/e/Sridhar/Photos/camera phone photos/iPhone";
 	var type = "dups.txt";
 	console.log('1');
 	{
@@ -22,15 +23,15 @@ app.get('/dups/all', function(req, res) {
 			var lines = stdout.split( "\n" )
 			puts(lines.length);
 			var json = {};
-			console.log('3');
+//			console.log('3');
 			var clustersInLocation = {};
 			var i = 0;
 			var end = false;
 			while (i < lines.length) {
-				console.log('4 - ' + lines[i]);
+//				console.log('4 - ' + lines[i]);
 				
 				if (/files in cluster/.test(lines[i])) {
-					console.log('5');
+//					console.log('5');
 					//clustersInLocation.push(lines[i]);
 					var cluster = [];
 					clustersInLocation[lines[i]] = cluster;
@@ -38,12 +39,12 @@ app.get('/dups/all', function(req, res) {
 					i++;
 					
 					if (i >= lines.length || lines[i] == null) {
-						console.log('6');
+//						console.log('6');
 						break;
 					}
 					while (!(/files in cluster/.test(lines[i]))) {
-						console.log('7 - ' + i);
-						cluster.push({ "filesystem" : location + lines[i], "http" : "<not needed yet>" });
+//						console.log('7 - ' + i);
+						cluster.push({ "filesystem" : location +'/'+ lines[i], "http" : "<not needed yet>" });
 						i++;
 						if (i >= lines.length) {
 							end = true;
@@ -51,17 +52,17 @@ app.get('/dups/all', function(req, res) {
 						}
 					}
 				} else {
-					console.log('8');
+//					console.log('8');
 					i++;
 				}
 				if (end) {
 					break;
 				}
-				console.log('9');
+//				console.log('9');
 			}
 
 			json[location] = clustersInLocation ;
-			console.log('10' + JSON.stringify(json, null, 4));
+			//console.log('10' + JSON.stringify(json, null, 4));
 			res.header("Access-Control-Allow-Origin", "*");			
 			res.send(json);
 		});
@@ -69,6 +70,22 @@ app.get('/dups/all', function(req, res) {
     
 });
 
+
+
+app.get('/dups/deleteFile', function(req, res) {
+	console.log('');
+	//console.log(req.query.fileSystemPath);
+	exec("rm '"+req.query.fileSystemPath+"'", function (error, stdout, stderr) { 
+		if (error != null) {
+			puts("ERROR:" + stderr);
+			//TODO: send error response
+			return;
+		}
+		puts('Deleted' + req.query.fileSystemPath);
+	});
+	res.header("Access-Control-Allow-Origin", "*");			
+	res.send({});
+});
 
 app.listen(4453);
 console.log('Listening on port http://netgear.rohidekar.com:4453/dups/all');
